@@ -4,8 +4,6 @@
 
 import 'package:flutter/material.dart';
 
-//import 'demo.dart';
-
 enum TabsDemoStyle { iconsAndText, iconsOnly, textOnly }
 
 class _Page {

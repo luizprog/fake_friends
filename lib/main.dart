@@ -54,25 +54,30 @@ class HomePageState extends State<HomePage> {
   }
 }
 */
-
 import 'dart:async';
 import 'dart:convert'; //it allows us to convert our json to a list
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
+import 'compras.dart';
+import 'vendas.dart';
+import 'financeiropag.dart';
+import 'financeirorec.dart';
+import 'contabilidade.dart';
+import 'estoque.dart';
 
 List data;
 List valueMap;
 String dataGet;
 var query;
 
-final List<String> listMenu = [
-  'Compras',
-  'Vendas',
-  'Financeiro',
-  'Estoque',
-  'Contabilidade',
+List<Category> _categories = [
+  Category('Compras', 'assets/images/buy.png'),
+  Category('Vendas', 'assets/images/returnPurchase.png'),
+  Category('FinanceiroRec', 'assets/images/money.png'),
+  Category('FinanceiroPag', 'assets/images/money.png'),
+  Category('Estoque', 'assets/images/product.png'),
+  Category('Contabilidade', 'assets/images/coins.png'),
 ];
 
 void main() {
@@ -102,65 +107,6 @@ class HomePageState extends State<HomePage> {
   }
 
   @override
-  /*Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('CRK'),
-        ),
-        body: new Center(
-          child: new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[],
-          ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _cIndex,
-          type: BottomNavigationBarType.shifting,
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_cart,
-                    color: Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('Compras')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.track_changes,
-                    color: Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('Vendas')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.line_weight,
-                    color: Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('Estoque')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.account_balance,
-                    color: Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('Contabilidade')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.local_offer,
-                    color: Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('Patrimonio')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.attach_money,
-                    color: Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('Financeiro')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.help, color: Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('Suporte')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.picture_as_pdf,
-                    color: Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('Relatorios')),
-            BottomNavigationBarItem(
-                icon:
-                    Icon(Icons.add_circle, color: Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('Cadastros')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings, color: Color.fromARGB(255, 0, 0, 0)),
-                title: new Text('Ajustes'))
-          ],
-          onTap: (index) {
-            _incrementTab(index);
-          },
-        ));
-  }*/
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
@@ -259,40 +205,34 @@ class HomePageState extends State<HomePage> {
       ),
       body: new Center(
         child: new GridView.count(
-            crossAxisCount: 3,
-            childAspectRatio: 1.0,
-            padding: const EdgeInsets.all(16.0),
-            mainAxisSpacing: 10.0,
-            crossAxisSpacing: 4.0,
-            children: List.generate(listMenu.length, (index){
-              return Center(
-                child:Container(
-                  decoration: BoxDecoration(border: Border.all(color: Colors.green,width:2.0)
-                ),
+          crossAxisCount: 3,
+          childAspectRatio: 1.0,
+          mainAxisSpacing: 5.0,
+          crossAxisSpacing: 5.0,
+          children: List.generate(_categories.length, (index) {
+            return Center(
+                child: FlatButton(
+              onPressed: () {
+                goScene(_categories[index].name);
+              },
+              child: Container(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  listMenu[index],
-                  style: Theme.of(context).textTheme.headline,
+                child: Row(
+                  textBaseline: TextBaseline.alphabetic,
+                  children: <Widget>[
+                    new Container(
+                      child: new Image.asset(
+                        _categories[index].icon,
+                        height: 60.0,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              );
-        }
-            /*
-          children: <String>[
-            'Compras',
-            'Vendas',
-            'Financeiro',
-            'Estoque',
-            'Contabilidade',
-          ].map((String url) {
-            return new IconButton(
-                highlightColor: Colors.deepOrangeAccent,
-                icon: Image.asset('assets/airtime.png'),
-                onPressed: () {
-                  print('qwert');
-                });
-          }).toList(),*/
-            ),
+            ));
+          }),
+        ),
       ),
     );
   }
@@ -308,6 +248,46 @@ class HomePageState extends State<HomePage> {
           "Accept": "application/json"
         });
     data = json.decode(response.body);
+  }
+
+  //Muda para a tela do item clicado
+  Future<String> goScene(String scene) async {
+    if (scene == 'Compras') {
+      Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (BuildContext context) => new Compras()));
+    }
+    if (scene == 'Vendas') {
+      Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (BuildContext context) => new Vendas()));
+    }
+    if (scene == 'FinanceiroRec') {
+      Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (BuildContext context) => new FinanceiroRec()));
+    }
+    if (scene == 'FinanceiroPag') {
+      Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (BuildContext context) => new FinanceiroPag()));
+    }
+    if (scene == 'Estoque') {
+      Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (BuildContext context) => new Estoque()));
+    }
+    if (scene == 'Contabilidade') {
+      Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (BuildContext context) => new Contabilidade()));
+    }
   }
 }
 
@@ -781,6 +761,30 @@ class _GetCotacaoPageState extends State<GetCotacaoPage> {
   }
 }
 
+class Category {
+  String name;
+  String icon;
+
+  Category(this.name, this.icon);
+}
+
 ///
 ///
 ///
+///
+///
+/*
+List<Category> _categories = [
+    Category('Sports', Icons.directions_run),
+    Category('Politics', Icons.gavel),
+    Category('Science', Icons.wb_sunny),
+];
+
+
+   children: <Widget>[
+          Icon(_categories[index].icon),
+          SizedBox(width: 20.0),
+          Text(_categories[index].name),
+        ],
+
+ * */
